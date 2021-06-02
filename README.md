@@ -2,6 +2,10 @@
 
 This is a Better Clothing Menu you didnt need to Press Enter to Select the Clothing or Prop
 
+# Credits to Durtyfree's NativeUI: https://github.com/DurtyFree/alt-V-NativeUI
+
+
+
 ```
   altVServer/
   └── resources/
