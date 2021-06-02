@@ -1,0 +1,22 @@
+{
+  "type": "module",
+  "name": "better_clothingmenu",
+  "version": "1.0.0",
+  "description": "A Better Clothing Menu with a Better and Newer Stucture",
+  "main": "server.js",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/LeCyreaxYT/altv-better-clothing.git"
+  },
+  "keywords": [
+    "altv",
+    "noclip",
+    "betternoclip"
+  ],
+  "author": "LeCyreaxYT",
+  "license": "MIT License",
+  "bugs": {
+    "url": "https://github.com/LeCyreaxYT/altv-better-clothing/issues"
+  },
+  "homepage": "https://github.com/LeCyreaxYT/altv-better-clothing/blob/main/README.md"
+}
