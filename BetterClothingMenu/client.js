@@ -49,7 +49,7 @@ const MenuText = {
 
 }
 
-const MaxListItems = 800;
+const MaxListItems = 500;
 
 
 // DO NOT EDIT
@@ -82,7 +82,7 @@ MasksMenu.AutoListChange.on((selectedItem, selectedItemIndex) => {
     let drawable = MasksDrawable.SelectedValue;
     let texture = MasksTexture.SelectedValue;
 
-    native.setPedComponentVariation(alt.Player.local.scriptID, 1, drawable, texture, 0);
+    alt.emitServer("betterClothingMenu:ChangeClothing", 1, drawable, texture);
 });
 
 // ========================================================================================================
@@ -109,7 +109,7 @@ HairStylesMenu.AutoListChange.on((selectedItem, selectedItemIndex) => {
     let texture1 = Hair1Texture.SelectedValue;
     let texture2 = Hair2Texture.SelectedValue;
 
-    native.setPedComponentVariation(alt.Player.local.scriptID, 2, drawable, 0, 0);
+    alt.emitServer("betterClothingMenu:ChangeClothing", 2, drawable, 0);
     native.setPedHairColor(alt.Player.local.scriptID, texture1, texture2);
 });
 
@@ -134,8 +134,7 @@ TorsosMenu.AutoListChange.on((selectedItem, selectedItemIndex) => {
     let drawable = TorsosDrawable.SelectedValue;
     let texture = TorsosTexture.SelectedValue;
 
-    native.setPedComponentVariation(alt.Player.local.scriptID, 3, drawable, texture, 0);
-
+    alt.emitServer("betterClothingMenu:ChangeClothing", 3, drawable, texture);
 });
 
 // ========================================================================================================
@@ -159,8 +158,7 @@ LegsMenu.AutoListChange.on((selectedItem, selectedItemIndex) => {
     let drawable = LegsDrawable.SelectedValue;
     let texture = LegsTexture.SelectedValue;
 
-    native.setPedComponentVariation(alt.Player.local.scriptID, 4, drawable, texture, 0);
-
+    alt.emitServer("betterClothingMenu:ChangeClothing", 4, drawable, texture);
 });
 
 // ========================================================================================================
@@ -184,7 +182,8 @@ BagsMenu.AutoListChange.on((selectedItem, selectedItemIndex) => {
     let drawable = BagsDrawable.SelectedValue;
     let texture = BagsTexture.SelectedValue;
 
-    native.setPedComponentVariation(alt.Player.local.scriptID, 5, drawable, texture, 0);
+    alt.emitServer("betterClothingMenu:ChangeClothing", 5, drawable, texture);
+
 
 });
 
@@ -209,8 +208,7 @@ ShoesMenu.AutoListChange.on((selectedItem, selectedItemIndex) => {
     let drawable = ShoesDrawable.SelectedValue;
     let texture = ShoesTexture.SelectedValue;
 
-    native.setPedComponentVariation(alt.Player.local.scriptID, 6, drawable, texture, 0);
-
+    alt.emitServer("betterClothingMenu:ChangeClothing", 6, drawable, texture);
 });
 
 // ========================================================================================================
@@ -234,8 +232,7 @@ AccessoriesMenu.AutoListChange.on((selectedItem, selectedItemIndex) => {
     let drawable = AccessoriesDrawable.SelectedValue;
     let texture = AccessoriesTexture.SelectedValue;
 
-    native.setPedComponentVariation(alt.Player.local.scriptID, 7, drawable, texture, 0);
-
+    alt.emitServer("betterClothingMenu:ChangeClothing", 7, drawable, texture);
 });
 
 // ========================================================================================================
@@ -259,7 +256,8 @@ UndershirtsMenu.AutoListChange.on((selectedItem, selectedItemIndex) => {
     let drawable = UndershirtsDrawable.SelectedValue;
     let texture = UndershirtsTexture.SelectedValue;
 
-    native.setPedComponentVariation(alt.Player.local.scriptID, 8, drawable, texture, 0);
+    alt.emitServer("betterClothingMenu:ChangeClothing", 8, drawable, texture);
+
 });
 
 // ========================================================================================================
@@ -283,7 +281,8 @@ BodyArmorsMenu.AutoListChange.on((selectedItem, selectedItemIndex) => {
     let drawable = BodyArmorsDrawable.SelectedValue;
     let texture = BodyArmorsTexture.SelectedValue;
 
-    native.setPedComponentVariation(alt.Player.local.scriptID, 9, drawable, texture, 0);
+    alt.emitServer("betterClothingMenu:ChangeClothing", 9, drawable, texture);
+
 });
 
 // ========================================================================================================
@@ -307,7 +306,8 @@ DecalsMenu.AutoListChange.on((selectedItem, selectedItemIndex) => {
     let drawable = DecalsDrawable.SelectedValue;
     let texture = DecalsTexture.SelectedValue;
 
-    native.setPedComponentVariation(alt.Player.local.scriptID, 10, drawable, texture, 0);
+    alt.emitServer("betterClothingMenu:ChangeClothing", 10, drawable, texture);
+
 
 });
 
@@ -332,7 +332,8 @@ TopsMenu.AutoListChange.on((selectedItem, selectedItemIndex) => {
     let drawable = TopsDrawable.SelectedValue;
     let texture = TopsTexture.SelectedValue;
 
-    native.setPedComponentVariation(alt.Player.local.scriptID, 11, drawable, texture, 0);
+    alt.emitServer("betterClothingMenu:ChangeClothing", 11, drawable, texture);
+
 
 });
 
@@ -357,8 +358,7 @@ HatsMenu.AutoListChange.on((selectedItem, selectedItemIndex) => {
     let drawable = HatsDrawable.SelectedValue;
     let texture = HatsTexture.SelectedValue;
 
-    native.clearPedProp(alt.Player.local.scriptID, 0);
-    native.setPedPropIndex(alt.Player.local.scriptID, 0, drawable, texture, false);
+    alt.emitServer("betterClothingMenu:ChangeProp", 0, drawable, texture);
 });
 
 // ========================================================================================================
@@ -382,8 +382,7 @@ GlassesMenu.AutoListChange.on((selectedItem, selectedItemIndex) => {
     let drawable = GlassesDrawable.SelectedValue;
     let texture = GlassesTexture.SelectedValue;
 
-    native.clearPedProp(alt.Player.local.scriptID, 1);
-    native.setPedPropIndex(alt.Player.local.scriptID, 1, drawable, texture, false);
+    alt.emitServer("betterClothingMenu:ChangeProp", 1, drawable, texture);
 });
 
 // ========================================================================================================
@@ -407,8 +406,7 @@ EarsMenu.AutoListChange.on((selectedItem, selectedItemIndex) => {
     let drawable = EarsDrawable.SelectedValue;
     let texture = EarsTexture.SelectedValue;
 
-    native.clearPedProp(alt.Player.local.scriptID, 2);
-    native.setPedPropIndex(alt.Player.local.scriptID, 2, drawable, texture, false);
+    alt.emitServer("betterClothingMenu:ChangeProp", 2, drawable, texture);
 });
 
 // ========================================================================================================
@@ -432,8 +430,7 @@ WatchesMenu.AutoListChange.on((selectedItem, selectedItemIndex) => {
     let drawable = WatchesDrawable.SelectedValue;
     let texture = WatchesTexture.SelectedValue;
 
-    native.clearPedProp(alt.Player.local.scriptID, 6);
-    native.setPedPropIndex(alt.Player.local.scriptID, 6, drawable, texture, false);
+    alt.emitServer("betterClothingMenu:ChangeProp", 6, drawable, texture);
 });
 
 // ========================================================================================================
@@ -457,8 +454,7 @@ BraceletsMenu.AutoListChange.on((selectedItem, selectedItemIndex) => {
     let drawable = BraceletsDrawable.SelectedValue;
     let texture = BraceletsTexture.SelectedValue;
 
-    native.clearPedProp(alt.Player.local.scriptID, 7);
-    native.setPedPropIndex(alt.Player.local.scriptID, 7, drawable, texture, false);
+    alt.emitServer("betterClothingMenu:ChangeProp", 7, drawable, texture);
 });
 
 // ========================================================================================================
