@@ -5,7 +5,7 @@
 
 
 import * as alt from 'alt-server';
-import { CLOTHING_CONFIG } from './shared';
+import { CLOTHING_CONFIG, PLAYER_MALE_MODEL } from './shared';
 
 
 alt.log("============================================================================");
@@ -14,9 +14,7 @@ alt.log("        © 2021 - 2021 Alec S. - DerEchteAlec - All Rights Reserved.   
 alt.log("============================================================================");
 
 alt.onClient("betterClothingMenu:ChangeClothing", (player, componentId, drawableId, textureId) => {
-    if (!player || player == null) return;
-
-    if (player.model === 1885233650) {
+    if (player.model === PLAYER_MALE_MODEL) {
         if (CLOTHING_CONFIG.MAXIMUM_COMPONENT_VALUES[1][componentId] < drawableId) {
             return;
         }
@@ -31,9 +29,7 @@ alt.onClient("betterClothingMenu:ChangeClothing", (player, componentId, drawable
 });
 
 alt.onClient("betterClothingMenu:ChangeProp", (player, componentId, drawableId, textureId) => {
-    if (!player || player == null) return;
-
-    if (player.model === 1885233650) {
+    if (player.model === PLAYER_MALE_MODEL) {
         if (CLOTHING_CONFIG.MAXIMUM_PROP_VALUES[1][componentId] < drawableId) {
             return;
         }
