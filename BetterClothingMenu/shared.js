@@ -1,3 +1,5 @@
+import * as alt from 'alt-shared';
+
 export const CLOTHING_CONFIG = {
     /**
      * Adjusting this may result in game crashing. Use with caution.
@@ -47,4 +49,6 @@ export const CLOTHING_CONFIG = {
             7: 15, // Bracelets
         },
     },
-    };
+};
+
+export const PLAYER_MALE_MODEL = alt.hash('mp_m_freemode_01');
