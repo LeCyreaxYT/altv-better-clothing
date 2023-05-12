@@ -1,5 +1,6 @@
-import { getCursorPos, setInterval, clearInterval, logWarning, emit, logError, clearTimeout, setTimeout, everyTick, getGxtText, showCursor } from 'alt-client';
-import game__default, { requestScaleformMovie, hasScaleformMovieLoaded, beginScaleformMovieMethod, scaleformMovieMethodAddParamBool, scaleformMovieMethodAddParamPlayerNameString, scaleformMovieMethodAddParamFloat, scaleformMovieMethodAddParamInt, endScaleformMovieMethod, endScaleformMovieMethodReturnValue, drawScaleformMovieFullscreen, setScaleformMovieAsNoLongerNeeded } from 'natives';
+import * as alt from 'alt-client';
+import * as game from 'natives';
+import game__default from 'natives';
 
 var BadgeStyle;
 (function (BadgeStyle) {
@@ -43,6 +44,7 @@ var Font;
     Font[Font["HouseScript"] = 1] = "HouseScript";
     Font[Font["Monospace"] = 2] = "Monospace";
     Font[Font["CharletComprimeColonge"] = 4] = "CharletComprimeColonge";
+    Font[Font["ChaletLondonFixedWidthNumbers"] = 5] = "ChaletLondonFixedWidthNumbers";
     Font[Font["Pricedown"] = 7] = "Pricedown";
 })(Font || (Font = {}));
 var Font$1 = Font;
@@ -671,7 +673,7 @@ class Text extends IElement {
         }
         const x = pos.X / 1280.0;
         const y = pos.Y / 720.0;
-        game__default.setTextFont(parseInt(font));
+        game__default.setTextFont(parseInt((font)));
         game__default.setTextScale(scale, scale);
         game__default.setTextColour(color.R, color.G, color.B, color.A);
         game__default.setTextCentre(centered);
@@ -698,7 +700,7 @@ class Text extends IElement {
     }
 }
 
-const gameScreen = game__default.getActiveScreenResolution(0, 0);
+const gameScreen = game__default.getActualScreenResolution(0, 0);
 class Screen {
     static get ResolutionMaintainRatio() {
         const ratio = Screen.Width / Screen.Height;
@@ -707,7 +709,7 @@ class Screen {
     }
     static MousePosition(relative = false) {
         const res = Screen.ResolutionMaintainRatio;
-        const cursor = getCursorPos();
+        const cursor = alt.getCursorPos();
         let [mouseX, mouseY] = [cursor.x, cursor.y];
         if (relative)
             [mouseX, mouseY] = [cursor.x / res.Width, cursor.y / res.Height];
@@ -723,16 +725,16 @@ class Screen {
             (mousePosition.Y > topLeft.Y && mousePosition.Y < topLeft.Y + boxSize.Height));
     }
     static GetTextWidth(text, font, scale) {
-        game__default.beginTextCommandGetWidth("CELL_EMAIL_BCON");
+        game__default.beginTextCommandGetScreenWidthOfDisplayText("CELL_EMAIL_BCON");
         Text.AddLongString(text);
         game__default.setTextFont(font);
         game__default.setTextScale(1.0, scale);
-        const width = game__default.endTextCommandGetWidth(true);
+        const width = game__default.endTextCommandGetScreenWidthOfDisplayText(true);
         const res = Screen.ResolutionMaintainRatio;
         return res.Width * width;
     }
     static GetLineCount(text, position, font, scale, wrap) {
-        game__default.beginTextCommandLineCount("CELL_EMAIL_BCON");
+        game__default.beginTextCommandGetNumberOfLinesForString("CELL_EMAIL_BCON");
         Text.AddLongString(text);
         const res = Screen.ResolutionMaintainRatio;
         const x = position.X / res.Width;
@@ -744,7 +746,7 @@ class Screen {
             const end = start + (wrap / res.Width);
             game__default.setTextWrap(x, end);
         }
-        let lineCount = game__default.endTextCommandLineCount(x, y);
+        let lineCount = game__default.endTextCommandGetNumberOfLinesForString(x, y);
         return lineCount;
     }
 }
@@ -767,9 +769,9 @@ class Sprite {
     requestTextureDictPromise(textureDict) {
         return new Promise((resolve, reject) => {
             game__default.requestStreamedTextureDict(textureDict, true);
-            let inter = setInterval(() => {
+            let inter = alt.setInterval(() => {
                 if (game__default.hasStreamedTextureDictLoaded(textureDict)) {
-                    clearInterval(inter);
+                    alt.clearInterval(inter);
                     return resolve(true);
                 }
             }, 10);
@@ -807,7 +809,7 @@ class Sprite {
         const h = this.Size.Height / height;
         const x = this.Pos.X / width + w * 0.5;
         const y = this.Pos.Y / height + h * 0.5;
-        game__default.drawSprite(textureDictionary, textureName, x, y, w, h, heading, color.R, color.G, color.B, color.A, true);
+        game__default.drawSprite(textureDictionary, textureName, x, y, w, h, heading, color.R, color.G, color.B, color.A, true, 0);
     }
 }
 
@@ -894,7 +896,7 @@ class ResText extends Text {
                 centered = undefined;
                 dropShadow = this.DropShadow;
                 outline = this.Outline;
-                wordWrap = this.WordWrap;
+                this.WordWrap;
             }
         }
         const screenw = Screen.Width;
@@ -904,7 +906,7 @@ class ResText extends Text {
         const width = height * ratio;
         const x = this.Pos.X / width;
         const y = this.Pos.Y / height;
-        game__default.setTextFont(parseInt(font));
+        game__default.setTextFont(parseInt((font)));
         game__default.setTextScale(1.0, scale);
         game__default.setTextColour(color.R, color.G, color.B, color.A);
         if (centered !== undefined) {
@@ -914,7 +916,7 @@ class ResText extends Text {
             if (dropShadow)
                 game__default.setTextDropshadow(2, 0, 0, 0, 0);
             if (outline)
-                logWarning("[NativeUI] ResText outline not working!");
+                alt.logWarning("[NativeUI] ResText outline not working!");
             switch (textAlignment) {
                 case Alignment$1.Centered:
                     game__default.setTextCentre(true);
@@ -991,7 +993,7 @@ class UIMenuItem {
     }
     set Description(text) {
         this._description = text;
-        if (this.hasOwnProperty('Parent')) {
+        if (this != undefined && this.Parent != undefined) {
             this.Parent.UpdateDescriptionCaption();
         }
     }
@@ -1008,7 +1010,7 @@ class UIMenuItem {
     }
     fireEvent() {
         if (this._event) {
-            emit(this._event.event, ...this._event.args);
+            alt.emit(this._event.event, ...this._event.args);
         }
     }
     Draw() {
@@ -1263,7 +1265,7 @@ class ItemsCollection {
 }
 
 class UIMenuListItem extends UIMenuItem {
-    constructor(text, description = "", collection = new ItemsCollection([]), startIndex = 0, data = null) {
+    constructor(text, description = "", collection = new ItemsCollection(([])), startIndex = 0, data = null) {
         super(text, description, data);
         this.ScrollingEnabled = true;
         this.HoldTimeBeforeScroll = 200;
@@ -1646,7 +1648,7 @@ class InstructionalButton {
         this._itemBind = item;
     }
     GetButtonId() {
-        return this._usingControls ? game__default.getControlInstructionalButton(2, this._buttonControl, false) : "t_" + this._buttonString;
+        return this._usingControls ? game__default.getControlInstructionalButtonsString(2, this._buttonControl, false) : "t_" + this._buttonString;
     }
 }
 
@@ -1654,7 +1656,7 @@ class Scaleform {
     constructor(scaleForm) {
         this._handle = 0;
         this.scaleForm = scaleForm;
-        this._handle = requestScaleformMovie(this.scaleForm);
+        this._handle = game.requestScaleformMovie(this.scaleForm);
     }
     get handle() {
         return this._handle;
@@ -1663,63 +1665,63 @@ class Scaleform {
         return this._handle != 0;
     }
     get isLoaded() {
-        return hasScaleformMovieLoaded(this._handle);
+        return game.hasScaleformMovieLoaded(this._handle);
     }
     callFunctionHead(funcName, ...args) {
         if (!this.isValid || !this.isLoaded)
             return;
-        beginScaleformMovieMethod(this._handle, funcName);
+        game.beginScaleformMovieMethod(this._handle, funcName);
         args.forEach((arg) => {
             switch (typeof arg) {
                 case "number":
                     {
                         if (Number(arg) === arg && arg % 1 !== 0) {
-                            scaleformMovieMethodAddParamFloat(arg);
+                            game.scaleformMovieMethodAddParamFloat(arg);
                         }
                         else {
-                            scaleformMovieMethodAddParamInt(arg);
+                            game.scaleformMovieMethodAddParamInt(arg);
                         }
                     }
                 case "string":
                     {
-                        scaleformMovieMethodAddParamPlayerNameString(arg);
+                        game.scaleformMovieMethodAddParamPlayerNameString(arg);
                         break;
                     }
                 case "boolean":
                     {
-                        scaleformMovieMethodAddParamBool(arg);
+                        game.scaleformMovieMethodAddParamBool(arg);
                         break;
                     }
                 default:
                     {
-                        logError(`Unknown argument type ${typeof arg} = ${arg.toString()} passed to scaleform with handle ${this._handle}`);
+                        alt.logError(`Unknown argument type ${typeof arg} = ${arg.toString()} passed to scaleform with handle ${this._handle}`);
                     }
             }
         });
     }
     callFunction(funcName, ...args) {
         this.callFunctionHead(funcName, ...args);
-        endScaleformMovieMethod();
+        game.endScaleformMovieMethod();
     }
     callFunctionReturn(funcName, ...args) {
         this.callFunctionHead(funcName, ...args);
-        return endScaleformMovieMethodReturnValue();
+        return game.endScaleformMovieMethodReturnValue();
     }
     render2D() {
         if (!this.isValid || !this.isLoaded)
             return;
-        drawScaleformMovieFullscreen(this._handle, 255, 255, 255, 255, 0);
+        game.drawScaleformMovieFullscreen(this._handle, 255, 255, 255, 255, 0);
     }
     recreate() {
         if (!this.isValid || !this.isLoaded)
             return;
-        setScaleformMovieAsNoLongerNeeded(this._handle);
-        this._handle = requestScaleformMovie(this.scaleForm);
+        game.setScaleformMovieAsNoLongerNeeded(this._handle);
+        this._handle = game.requestScaleformMovie(this.scaleForm);
     }
     destroy() {
         if (!this.isValid)
             return;
-        setScaleformMovieAsNoLongerNeeded(this._handle);
+        game.setScaleformMovieAsNoLongerNeeded(this._handle);
         this._handle = 0;
     }
 }
@@ -1737,12 +1739,12 @@ class Message {
     }
     static Load() {
         if (this._delayedTransitionInTimeout != null) {
-            clearTimeout(this._delayedTransitionInTimeout);
+            alt.clearTimeout(this._delayedTransitionInTimeout);
             this._delayedTransitionInTimeout = null;
         }
     }
     static SetDelayedTransition(messageHandler, time) {
-        this._delayedTransitionInTimeout = setTimeout(() => {
+        this._delayedTransitionInTimeout = alt.setTimeout(() => {
             this._delayedTransitionInTimeout = null;
             this.TransitionIn(messageHandler, time);
         }, this._transitionOutTimeMs);
@@ -1766,15 +1768,15 @@ class Message {
         if (!this._messageVisible)
             return;
         if (this._transitionOutTimeout != null) {
-            clearTimeout(this._transitionOutTimeout);
+            alt.clearTimeout(this._transitionOutTimeout);
             this._transitionOutTimeout = null;
         }
         if (this._transitionOutFinishedTimeout != null) {
-            clearTimeout(this._transitionOutFinishedTimeout);
+            alt.clearTimeout(this._transitionOutFinishedTimeout);
             this._transitionOutFinishedTimeout = null;
         }
         this._scaleform.callFunction(this._transitionOutAnimName);
-        this._transitionOutFinishedTimeout = setTimeout(() => {
+        this._transitionOutFinishedTimeout = alt.setTimeout(() => {
             this._messageVisible = false;
             this._scaleform.recreate();
         }, this._transitionOutTimeMs);
@@ -1785,7 +1787,7 @@ class Message {
         this.SetTransitionOutTimer(transitionOutTime);
     }
     static SetTransitionOutTimer(time) {
-        this._transitionOutTimeout = setTimeout(() => {
+        this._transitionOutTimeout = alt.setTimeout(() => {
             this._transitionOutTimeout = null;
             this.TransitionOut();
         }, time);
@@ -1807,7 +1809,7 @@ Message._transitionOutAnimName = null;
 class BigMessage extends Message {
     static Initialize(scaleForm, transitionOutAnimName) {
         super.Initialize(scaleForm, transitionOutAnimName);
-        everyTick(() => this.Render());
+        alt.everyTick(() => this.Render());
     }
     static ShowMissionPassedMessage(msg, subtitle = "", time = 5000) {
         this.ShowCustomShard("SHOW_MISSION_PASSED_MESSAGE", time, msg, subtitle, 100, true, 0, true);
@@ -1845,7 +1847,7 @@ BigMessage.Initialize("MP_BIG_MESSAGE_FREEMODE", "TRANSITION_OUT");
 class MidsizedMessage extends Message {
     static Initialize(scaleForm, transitionOutAnimName) {
         super.Initialize(scaleForm, transitionOutAnimName);
-        everyTick(() => this.Render());
+        alt.everyTick(() => this.Render());
     }
     static ShowMidsizedMessage(title, message = "", time = 5000) {
         this.ShowCustomShard("SHOW_MIDSIZED_MESSAGE", time, title, message);
@@ -1870,10 +1872,10 @@ class UIMenuDynamicListItem extends UIMenuItem {
         this._selectedStartValueHandler = null;
         this.SelectionChangeHandler = null;
         if (!this.isVariableFunction(selectionChangeHandler)) {
-            logError(`[UIMenuDynamicListItem] ${text} is not created with a valid selectionChangeHandler, needs to be function. Please see docs.`);
+            alt.logError(`[UIMenuDynamicListItem] ${text} is not created with a valid selectionChangeHandler, needs to be function. Please see docs.`);
         }
         if (!this.isVariableFunction(selectedStartValueHandler)) {
-            logError(`[UIMenuDynamicListItem] ${text} is not created with a valid selectedStartValueHandler, needs to be function. Please see docs.`);
+            alt.logError(`[UIMenuDynamicListItem] ${text} is not created with a valid selectedStartValueHandler, needs to be function. Please see docs.`);
         }
         this.SelectionChangeHandler = selectionChangeHandler;
         this._selectedStartValueHandler = selectedStartValueHandler;
@@ -1989,8 +1991,8 @@ class NativeUI {
         this._defaultTitleScale = 1.15;
         this._maxMenuItems = 1000;
         this.Id = UUIDV4();
-        this.SelectTextLocalized = getGxtText("HUD_INPUT2");
-        this.BackTextLocalized = getGxtText("HUD_INPUT3");
+        this.SelectTextLocalized = alt.getGxtText("HUD_INPUT2");
+        this.BackTextLocalized = alt.getGxtText("HUD_INPUT3");
         this.WidthOffset = 0;
         this.ParentMenu = null;
         this.ParentItem = null;
@@ -2042,7 +2044,7 @@ class NativeUI {
         this._descriptionText.Wrap = 400;
         this._background = new Sprite("commonmenu", "gradient_bgd", new Point(this._offset.X, 144 + this._offset.Y - 37 + this._extraOffset), new Size(290, 25));
         this._visible = false;
-        everyTick(this.render.bind(this));
+        alt.everyTick(this.render.bind(this));
     }
     GetSpriteBanner() {
         return this._bannerSprite;
@@ -2067,10 +2069,10 @@ class NativeUI {
         this._titleResText.Caption = text;
     }
     get GetSubTitle() {
-        return this._titleResText;
+        return this._subtitleResText;
     }
     get SubTitle() {
-        return this._titleResText.Caption;
+        return this._subtitleResText.Caption;
     }
     set SubTitle(text) {
         this._subtitleResText.Caption = text;
@@ -2122,7 +2124,7 @@ class NativeUI {
                 }
             }
             if (menuPool.length === 0) {
-                game__default.setMouseCursorSprite(1);
+                game__default.setMouseCursorStyle(1);
             }
         }
     }
@@ -2191,7 +2193,7 @@ class NativeUI {
         if (this._bannerSprite != null) {
             this._bannerSprite.Size = new Size(431 + this.WidthOffset, 107);
         }
-        this._mainMenu.Items[0].pos = new Point((this.WidthOffset + this._offset.X + 431) / 2, 20 + this._offset.Y);
+        this._mainMenu.Items[0].pos = new Point(215 + this._offset.X + (this.WidthOffset / 2), 20 + this._offset.Y);
         if (this._counterText) {
             this._counterText.Pos = new Point(425 + this._offset.X + widthOffset, 110 + this._offset.Y);
         }
@@ -2356,14 +2358,13 @@ class NativeUI {
             return;
         }
         const it = this.MenuItems[this.CurrentSelection];
+        Common.PlaySound(this.AUDIO_SELECT, this.AUDIO_LIBRARY);
+        this.ItemSelect.emit(it, this.CurrentSelection);
         if (this.MenuItems[this.CurrentSelection] instanceof UIMenuCheckboxItem) {
             it.Checked = !it.Checked;
-            Common.PlaySound(this.AUDIO_SELECT, this.AUDIO_LIBRARY);
             this.CheckboxChange.emit(it, it.Checked);
         }
         else {
-            Common.PlaySound(this.AUDIO_SELECT, this.AUDIO_LIBRARY);
-            this.ItemSelect.emit(it, this.CurrentSelection);
             if (this.Children.has(it.Id)) {
                 const subMenu = this.Children.get(it.Id);
                 this.Visible = false;
@@ -2383,7 +2384,7 @@ class NativeUI {
         return false;
     }
     IsMouseInListItemArrows(item, topLeft, safezone) {
-        game__default.beginTextCommandGetWidth("jamyfafi");
+        game__default.beginTextCommandGetScreenWidthOfDisplayText("jamyfafi");
         game__default.addTextComponentSubstringPlayerName(item.Text);
         let res = Screen.ResolutionMaintainRatio;
         let screenw = res.Width;
@@ -2391,7 +2392,7 @@ class NativeUI {
         const height = 1080.0;
         const ratio = screenw / screenh;
         let width = height * ratio;
-        const labelSize = game__default.endTextCommandGetWidth(false) * width * 0.35;
+        const labelSize = game__default.endTextCommandGetScreenWidthOfDisplayText(false) * width * 0.35;
         const labelSizeX = 5 + labelSize + 10;
         const arrowSizeX = 431 - labelSizeX;
         return Screen.IsMouseInBounds(topLeft, new Size(labelSizeX, 38))
@@ -2405,21 +2406,21 @@ class NativeUI {
             this.MenuItems.filter(i => i.Hovered).forEach(i => (i.Hovered = false));
             return;
         }
-        showCursor(true);
+        alt.showCursor(true);
         let limit = this.MenuItems.length - 1;
         let counter = 0;
         if (this.MenuItems.length > this._maxItemsOnScreen + 1)
             limit = this._maxItem;
         if (Screen.IsMouseInBounds(new Point(0, 0), new Size(30, 1080)) && this._mouseEdgeEnabled) {
             game__default.setGameplayCamRelativeHeading(game__default.getGameplayCamRelativeHeading() + 5.0);
-            game__default.setMouseCursorSprite(6);
+            game__default.setMouseCursorStyle(6);
         }
         else if (Screen.IsMouseInBounds(new Point(Screen.ResolutionMaintainRatio.Width - 30.0, 0), new Size(30, 1080)) && this._mouseEdgeEnabled) {
             game__default.setGameplayCamRelativeHeading(game__default.getGameplayCamRelativeHeading() - 5.0);
-            game__default.setMouseCursorSprite(7);
+            game__default.setMouseCursorStyle(7);
         }
         else if (this._mouseEdgeEnabled) {
-            game__default.setMouseCursorSprite(1);
+            game__default.setMouseCursorStyle(1);
         }
         for (let i = this._minItem; i <= limit; i++) {
             let xpos = this._offset.X;
@@ -2431,7 +2432,7 @@ class NativeUI {
                 uiMenuItem.Hovered = true;
                 const res = this.IsMouseInListItemArrows(this.MenuItems[i], new Point(xpos, ypos), 0);
                 if (uiMenuItem.Hovered && res == 1 && (this.MenuItems[i] instanceof UIMenuListItem || this.MenuItems[i] instanceof UIMenuAutoListItem || this.MenuItems[i] instanceof UIMenuDynamicListItem)) {
-                    game__default.setMouseCursorSprite(5);
+                    game__default.setMouseCursorStyle(5);
                 }
                 if (game__default.isControlJustReleased(0, 24) || game__default.isDisabledControlJustReleased(0, 24))
                     if (uiMenuItem.Selected && uiMenuItem.Enabled) {
@@ -2689,8 +2690,8 @@ class NativeUI {
         this._instructionalButtonsScaleform.callFunction("CLEAR_ALL");
         this._instructionalButtonsScaleform.callFunction("TOGGLE_MOUSE_BUTTONS", 0);
         this._instructionalButtonsScaleform.callFunction("CREATE_CONTAINER");
-        this._instructionalButtonsScaleform.callFunction("SET_DATA_SLOT", 0, game__default.getControlInstructionalButton(2, Control$1.PhoneSelect, false), this.SelectTextLocalized);
-        this._instructionalButtonsScaleform.callFunction("SET_DATA_SLOT", 1, game__default.getControlInstructionalButton(2, Control$1.PhoneCancel, false), this.BackTextLocalized);
+        this._instructionalButtonsScaleform.callFunction("SET_DATA_SLOT", 0, game__default.getControlInstructionalButtonsString(2, Control$1.PhoneSelect, false), this.SelectTextLocalized);
+        this._instructionalButtonsScaleform.callFunction("SET_DATA_SLOT", 1, game__default.getControlInstructionalButtonsString(2, Control$1.PhoneCancel, false), this.BackTextLocalized);
         let count = 2;
         this._instructionalButtons.filter(b => b.ItemBind == null || this.MenuItems[this.CurrentSelection] == b.ItemBind).forEach((button) => {
             this._instructionalButtonsScaleform.callFunction("SET_DATA_SLOT", count, button.GetButtonId(), button.Text);
@@ -2780,5 +2781,4 @@ class NativeUI {
     }
 }
 
-export default NativeUI;
-export { Alignment$1 as Alignment, BadgeStyle$1 as BadgeStyle, BigMessage, ChangeDirection$1 as ChangeDirection, Color, Control$1 as Control, Font$1 as Font, HudColor$1 as HudColor, InstructionalButton, ItemsCollection, ListItem, NativeUI as Menu, MidsizedMessage, Point, ResRectangle, Size, Sprite, UIMenuAutoListItem, UIMenuCheckboxItem, UIMenuDynamicListItem, UIMenuItem, UIMenuListItem, UIMenuSliderItem };
+export { Alignment$1 as Alignment, BadgeStyle$1 as BadgeStyle, BigMessage, ChangeDirection$1 as ChangeDirection, Color, Control$1 as Control, Font$1 as Font, HudColor$1 as HudColor, InstructionalButton, ItemsCollection, ListItem, NativeUI as Menu, MidsizedMessage, Point, ResRectangle, Size, Sprite, UIMenuAutoListItem, UIMenuCheckboxItem, UIMenuDynamicListItem, UIMenuItem, UIMenuListItem, UIMenuSliderItem, NativeUI as default };

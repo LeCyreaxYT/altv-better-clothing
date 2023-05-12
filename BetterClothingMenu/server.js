@@ -5,7 +5,7 @@
 
 
 import * as alt from 'alt-server';
-import { CLOTHING_CONFIG, PLAYER_MALE_MODEL } from './shared';
+import { CLOTHING_CONFIG, PLAYER_MALE_MODEL } from './shared.js';
 
 
 alt.log("============================================================================");
