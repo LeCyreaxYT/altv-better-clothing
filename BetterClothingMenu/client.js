@@ -6,7 +6,7 @@
 
 import * as alt from 'alt-client';
 import * as native from 'natives';
-import * as NativeUI from './NativeUI/NativeUI';
+import * as NativeUI from './NativeUI/nativeui.js';
 
 // THIS CAN YOU EDIT
 const MenuSettings = {
@@ -17,7 +17,7 @@ const MenuSettings = {
     TextAlignment: NativeUI.Alignment.Centered,
 }
 
-const KeyControlls = {
+const KeyControls = {
     ToggleAltV: 117,
 }
 
@@ -55,7 +55,7 @@ const MaxListItems = 500;
 // DO NOT EDIT
 const ClothingMenu = new NativeUI.Menu(MenuText.MenuTitle, MenuText.MenuSubTitle, MenuSettings.Point);
 ClothingMenu.Visible = false;
-ClothingMenu.GetTitle().Scale = MenuSettings.TitleScale,
+ClothingMenu.GetTitle().Scale = MenuSettings.TitleScale;
 ClothingMenu.GetTitle().Font = MenuSettings.TitleFont;
 ClothingMenu.GetTitle().DropShadow = MenuSettings.DropShadow;
 ClothingMenu.GetTitle().TextAlignment = MenuSettings.TextAlignment;
@@ -461,7 +461,7 @@ BraceletsMenu.AutoListChange.on((selectedItem, selectedItemIndex) => {
 // Event Section
 
 alt.on("keyup", (key) => {
-   if(key === KeyControlls.ToggleAltV) {
+   if(key === KeyControls.ToggleAltV) {
        ClothingMenu.Visible = !ClothingMenu.Visible;
    }
 });
